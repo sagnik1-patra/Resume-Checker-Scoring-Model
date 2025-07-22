@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Classifier</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input[type=file], button { padding: 10px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Resume Role Predictor</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="resume" accept=".pdf" required><br>
+        <button type="submit">Predict Role</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch("/predict", { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.error) {
+                alert(result.error);
+            } else {
+                document.getElementById("result").innerHTML =
+                    `<h2> Predicted Role: ${result.category}</h2>
+                     <h3> Confidence: ${result.confidence}</h3>`;
+            }
+        };
+    </script>
+</body>
+</html>
